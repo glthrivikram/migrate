@@ -617,12 +617,12 @@ class ClustersClient(dbclient):
                     if cluster_perms['http_status_code'] == 200 and acls:
                         acl_log_fp.write(json.dumps(cluster_perms) + '\n')
                     else:
-                        error_logger.error(f'Failed to get cluster ACL: {cluster_perms}')
+                       error_logger.error(f'Failed to get cluster ACL1: {cluster_perms}')
 
                 elif cluster_perms['http_status_code'] == 200:
                     acl_log_fp.write(json.dumps(cluster_perms) + '\n')
-                else:
-                    error_logger.error(f'Failed to get cluster ACL: {cluster_perms}')
+                #else:
+                #    error_logger.error(f'Failed to get cluster ACL2: {cluster_perms}')
 
                 if filter_user:
                     if cluster_json['creator_user_name'] == filter_user:
@@ -660,16 +660,16 @@ class ClustersClient(dbclient):
                 perms['name'] = policy_ids[pid]
 
                 # remove any ACLs that involve users/groups that have been filtered
-                if users_list:
-                    acls = [acl for acl in perms.get("access_control_list") if
-                            (acl.get("group_name", "") in self.groups_to_keep) or
-                            (acl.get("user_name", "") in users_list) or
-                            (acl.get("group_name", "" == "users"))]
-                    if acls:
-                        perms["access_control_list"] = acls
-                        acl_fp.write(json.dumps(perms) + '\n')
-                else:
-                    acl_fp.write(json.dumps(perms) + '\n')
+                # if users_list:
+                #     acls = [acl for acl in perms.get("access_control_list") if
+                #             (acl.get("group_name", "") in self.groups_to_keep) or
+                #             (acl.get("user_name", "") in users_list) or
+                #             (acl.get("group_name", "" == "users"))]
+                #     if acls:
+                #         perms["access_control_list"] = acls
+                #         acl_fp.write(json.dumps(perms) + '\n')
+                # else:
+                #     acl_fp.write(json.dumps(perms) + '\n')
 
     def log_instance_pools(self, log_file='instance_pools.log'):
         pool_log = self.get_export_dir() + log_file

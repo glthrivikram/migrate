@@ -351,7 +351,8 @@ class WorkspaceClient(dbclient):
             logging_utils.log_response_error(error_logger, resp)
             return resp
         if resp.get('error_code', None):
-            if self.skip_large_nb and resp.get("message", None) == 'Size exceeds 10485760 bytes':
+            resp_msg = resp.get("message", None)
+            if self.skip_large_nb and (resp_msg == 'Size exceeds 10485760 bytes' or ("Notebook size exceeded limit" in resp_msg and "10485760" in resp_msg)):
                 logging.info("Notebook {} skipped due to size exceeding limit".format(notebook_path))
             else:
                 resp['path'] = notebook_path
