@@ -324,6 +324,10 @@ optional arguments:
                         account id
   --old-account-id OLD_ACCOUNT_ID
                         Old account ID to filter on
+  --update-cluster-name UPDATE_CRM_CLUSTER_NAME
+                        Set the crm cluster name for instance profiles to new workspace
+  --old-cluster-name OLD_CRM_CLUSTER_NAME
+                        old crm cluster name to replace on
   --replace-old-email REPLACE_OLD_EMAIL
                         Old email address to update from logs
   --update-new-email UPDATE_NEW_EMAIL

@@ -414,6 +414,35 @@ class dbclient:
             group_file = 'groups/' + group_name
             if os.path.exists(log_dir + group_file):
                 self.replace_file_contents(old_account_id, new_aws_account_id, group_file)
+                
+    def update_cluster_name(self, new_crm_cluster_name, old_crm_cluster_name):
+        log_dir = self.get_export_dir()
+        logs_to_update = ['users.log',
+                          'instance_profiles.log', 'clusters.log', 'cluster_policies.log',
+                          'jobs.log', 'job_id_map.log']
+        replaceMap = {
+            f"role/{old_crm_cluster_name}-reon-cloudbreak-role":f"role/{new_crm_cluster_name}-reon-cloudbreak-role",
+            f"role/{old_crm_cluster_name}-ds-cloudbreak-role":f"role/{new_crm_cluster_name}-ds-cloudbreak-role",
+             f"instance-profile/{old_crm_cluster_name}-reon-cloudbreak-instance-profile":f"instance-profile/{new_crm_cluster_name}-reon-cloudbreak-instance-profile",
+            f"instance-profile/{old_crm_cluster_name}-ds-cloudbreak-instance-profile":f"instance-profile/{new_crm_cluster_name}-ds-cloudbreak-instance-profile"
+        }
+
+        # update individual logs first
+        for log_name in logs_to_update:
+            if os.path.exists(log_dir + log_name):
+                for oldKey in replaceMap:
+                    print(f"in {log_name} replace {oldKey} to {replaceMap[oldKey]}")
+                    self.replace_file_contents(oldKey,replaceMap[oldKey],log_name)
+
+        # # update group logs
+        group_dir = log_dir + 'groups/'
+        groups = self.listdir(group_dir)
+        for group_name in groups:
+            group_file = 'groups/' + group_name
+            if os.path.exists(log_dir + group_file):
+                for oldKey in replaceMap:
+                    print(f"in {log_name} replace {oldKey} to {replaceMap[oldKey]}")
+                    self.replace_file_contents(oldKey,replaceMap[oldKey], group_file)
 
     def update_email_addresses(self, old_email_address, new_email_address):
         """

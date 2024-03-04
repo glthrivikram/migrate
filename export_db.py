@@ -214,6 +214,14 @@ def main():
         end = timer()
         print("Complete account id update time: " + str(timedelta(seconds=end - start)))
 
+    if args.update_cluster_name and args.old_cluster_name:
+        print("Updating old crm cluster name to new cluster name at {0}".format(now))
+        start = timer()
+        client = dbclient(client_config)
+        client.update_cluster_name(args.update_cluster_name, args.old_cluster_name)
+        end = timer()
+        print("Complete account id update time: " + str(timedelta(seconds=end - start)))
+
     if args.replace_old_email and args.update_new_email:
         print("Updating old email to new email address at {0}".format(now))
         start = timer()

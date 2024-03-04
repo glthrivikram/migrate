@@ -203,6 +203,12 @@ def get_export_parser():
 
     parser.add_argument('--old-account-id', action='store',
                         help='Old account ID to filter on')
+    
+    parser.add_argument('--update-cluster-name', action='store',
+                        help='Set the crm cluster name for instance profiles to new workspace')
+
+    parser.add_argument('--old-cluster-name', action='store',
+                        help='old crm cluster name to replace on')
 
     parser.add_argument('--replace-old-email', action='store',
                         help='Old email address to update from logs')
