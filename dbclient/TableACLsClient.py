@@ -294,7 +294,7 @@ class TableACLsClient(ClustersClient):
         notebook_run_metadata = self.wait_for_notebook_to_terminate(run_id)
 
         # cleanup dbfs: remove one directory above dbfs_acls_input_path
-        self.delete_files_on_dbfs(dbfs_acls_input_path[0:dbfs_acls_input_path.rindex('/')])
+        #self.delete_files_on_dbfs(dbfs_acls_input_path[0:dbfs_acls_input_path.rindex('/')])
 
         # leave notebook there, so it can be removed later
         # we leave the cluster running, makes trouble shooting more efficient

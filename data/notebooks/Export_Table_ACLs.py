@@ -159,11 +159,24 @@ def create_table_ACLSs_df_for_databases(database_names: List[str], include_catal
     combined_grant_dfs = combined_grant_dfs.unionAll(
       create_grants_df(database_name, "DATABASE", database_name)
     )
+    skipDatabaseNamesWithPrefix = FIXTHIS
+    skipDb = False
+    for skipPrefix in skipDatabaseNamesWithPrefix:
+      if(database_name.startswith(skipPrefix)):
+        skipDb = True
+
+    tablesInDb = spark.sql(f"SHOW TABLES IN {database_name}").filter(sf.col("isTemporary") == False).collect()
+    numTables = len(tablesInDb)
+    print(f"total tables in db {database_name} : {numTables}")
+    if(skipDb == False):
+      if(numTables > 500):
+        skipDb=True
     
     try:
-      tables_and_views_rows = spark.sql(
-        f"SHOW TABLES IN {database_name}"
-      ).filter(sf.col("isTemporary") == False).collect()
+      tables_and_views_rows = tablesInDb
+      if(skipDb):
+        tables_and_views_rows = []
+        print(f"skipping tableacls for db {database_name}")
 
       print(f"{datetime.datetime.now()} working on database {database_name} with {len(tables_and_views_rows)} tables and views")
       num_tables_or_views_processed = num_tables_or_views_processed + len(tables_and_views_rows)
@@ -171,9 +184,10 @@ def create_table_ACLSs_df_for_databases(database_names: List[str], include_catal
       for table_row in tables_and_views_rows:
 
         # TABLE, VIEW
-        combined_grant_dfs = combined_grant_dfs.unionAll(
-          create_grants_df(database_name, "TABLE", f"{table_row.database}.{table_row.tableName}")
-        )
+        if(len(tables_and_views_rows) < 500):
+          combined_grant_dfs = combined_grant_dfs.unionAll(
+            create_grants_df(database_name, "TABLE", f"{table_row.database}.{table_row.tableName}")
+          )
     except:  
       # error in SHOW TABLES IN database_name, errors in create_grants_df have already been catched
       combined_grant_dfs = combined_grant_dfs.unionAll(
@@ -213,7 +227,7 @@ else:
   print(f"Exporting the following databases: {databases}")
 
 counter = 1
-for databases_chunks in chunks(databases, 1):
+for databases_chunks in chunks(databases, 10):
   table_ACLs_df, num_databases_processed, num_tables_or_views_processed = create_table_ACLSs_df_for_databases(
     databases_chunks, include_catalog
   )

@@ -7,7 +7,11 @@
     "spark.databricks.repl.allowedLanguages": "python,sql",
     "spark.databricks.acl.dfAclsEnabled": "true",
     "spark.sql.hive.metastore.version": "1.2.1",
-    "spark.sql.hive.metastore.jars": "maven"
+    "spark.sql.hive.metastore.jars": "maven",
+    "spark.hadoop.javax.jdo.option.ConnectionPassword":"FIXTHIS__{{hivemetastorepassword}}",
+    "spark.hadoop.javax.jdo.option.ConnectionURL":"jdbc:mysql://FIXTHIS__{{hivemetastoreurl}}:3306/FIXTHIS__{{hivedbname}}",
+    "javax.jdo.option.ConnectionDriverName":"org.mariadb.jdbc.Driver",
+    "spark.hadoop.javax.jdo.option.ConnectionUserName":"FIXTHIS__{hivemetastoreuser}"
   },
   "aws_attributes": {
     "first_on_demand": 1,

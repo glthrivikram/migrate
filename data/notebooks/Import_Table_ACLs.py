@@ -90,6 +90,8 @@ def generate_table_acls_command(action_types, object_type, object_key, principal
 
   if grant_privs:
     lines.append(f"GRANT {', '.join(grant_privs)} ON {object_type} {object_key} TO `{principal}`;")
+    if ("SELECT" in grant_privs) and ("DATABASE" == object_key):
+      lines.append(f"GRANT USAGE ON {object_type} {object_key} TO `{principal}`;")
   if deny_privs:
     lines.append(f"DENY {', '.join(deny_privs)} ON {object_type} {object_key} TO `{principal}`;")
     
