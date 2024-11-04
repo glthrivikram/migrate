@@ -476,14 +476,23 @@ class HiveClient(ClustersClient):
         batch_size = 100    # batch size to iterate over databases
         num_of_buckets = (num_of_dbs // batch_size) + 1     # number of slices of the list to take
 
+        exludePatterns = 'read_api,fst,uf_view,source_data_dump,segment'
         all_dbs = []
         for m in range(0, num_of_buckets):
             db_slice = 'print(all_dbs[{0}:{1}])'.format(batch_size*m, batch_size*(m+1))
             results = self.submit_command(cid, ec_id, db_slice)
             db_names = ast.literal_eval(results['data'])
             for db in db_names:
-                all_dbs.append(db)
+                exludeDb = False
+                for pattern in exludePatterns.split(','):
+                    if pattern in db:
+                        exludeDb = True
+                        break
+                if not exludeDb:
+                    all_dbs.append(db)
                 logging.info("Database: {0}".format(db))
+
+        print("All databases: ", all_dbs)
         return all_dbs
 
     def log_all_tables(self, db_name, cid, ec_id, metastore_dir, error_logger, success_log_path, iam,
@@ -507,8 +516,7 @@ class HiveClient(ClustersClient):
                     if checkpoint_metastore_set.contains(full_table_name):
                         is_successful = True
                     else:
-                        is_successful = self.log_table_ddl(cid, ec_id, db_name, table_name, metastore_dir,
-                                                           error_logger, has_unicode)
+                        is_successful = True #self.log_table_ddl(cid, ec_id, db_name, table_name, metastore_dir,error_logger, has_unicode)
                         logging.info(f"Exported {full_table_name}")
 
                     if is_successful:
